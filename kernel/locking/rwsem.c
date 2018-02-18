@@ -773,6 +773,7 @@ rwsem_spin_on_owner(struct rw_semaphore *sem)
 	struct task_struct *new, *owner;
 	unsigned long flags, new_flags;
 	enum owner_state state;
+	int i = 0;
 	int cnt = 0;
 	bool time_out = false;
 
@@ -814,7 +815,8 @@ rwsem_spin_on_owner(struct rw_semaphore *sem)
 			break;
 		}
 
-		cpu_relax();
+		if (i++ > 1000)
+			cpu_relax();
 	}
 
 	return state;
