@@ -187,7 +187,6 @@ static inline int __task_prio(const struct task_struct *p)
 	if (p->sched_class == &ext_sched_class)
 		return MAX_RT_PRIO + MAX_NICE + 1; /* 120, squash ext */
 #endif
-
 	return MAX_RT_PRIO + MAX_NICE; /* 119, squash fair */
 }
 
@@ -3761,6 +3760,7 @@ int select_task_rq(struct task_struct *p, int cpu, int wake_flags)
 	 * [ this allows ->select_task() to simply return task_cpu(p) and
 	 *   not worry about this generic constraint ]
 	 */
+
 	if (unlikely(!is_cpu_allowed(p, cpu)))
 		cpu = select_fallback_rq(task_cpu(p), p);
 
@@ -4879,7 +4879,6 @@ late_initcall(sched_core_sysctl_init);
  */
 int sched_fork(unsigned long clone_flags, struct task_struct *p)
 {
-
 	int ret;
 
 	trace_android_rvh_sched_fork(p);
@@ -4998,7 +4997,6 @@ void sched_cancel_fork(struct task_struct *p)
 void sched_post_fork(struct task_struct *p)
 {
 	uclamp_post_fork(p);
-
 	scx_post_fork(p);
 }
 
@@ -5877,7 +5875,6 @@ void scheduler_tick(void)
 	}
 #endif
 	trace_android_vh_scheduler_tick(rq);
-
 }
 
 #ifdef CONFIG_NO_HZ_FULL
@@ -6904,7 +6901,6 @@ static void __sched notrace __schedule(unsigned int sched_mode)
 		psi_sched_switch(prev, next, !task_on_rq_queued(prev));
 
 		trace_sched_switch(sched_mode & SM_MASK_PREEMPT, prev, next, prev_state);
-
 		/* Also unlocks the rq: */
 		rq = context_switch(rq, prev, next, &rf);
 	} else {
@@ -7374,10 +7370,11 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
 		} else {
 			if (dl_prio(oldprio))
 				p->dl.pi_se = &p->dl;
-			else if (rt_prio(oldprio))
+			if (rt_prio(oldprio))
 				p->rt.timeout = 0;
 			else if (!task_has_idle_policy(p))
 				reweight_task(p, prio - MAX_RT_PRIO);
+
 		}
 
 		__setscheduler_prio(p, prio);
@@ -7856,7 +7853,6 @@ static int __sched_setscheduler(struct task_struct *p,
 	struct rq *rq;
 	bool cpuset_locked = false;
 
-
 	/* The pi code expects interrupts enabled */
 	BUG_ON(pi && in_interrupt());
 recheck:
@@ -7921,7 +7917,6 @@ recheck:
 	 * To be able to change p->policy safely, the appropriate
 	 * runqueue lock must be held.
 	 */
-
 	rq = task_rq_lock(p, &rf);
 	update_rq_clock(rq);
 
@@ -7993,7 +7988,6 @@ change:
 	if (unlikely(oldpolicy != -1 && oldpolicy != p->policy)) {
 		policy = oldpolicy = -1;
 		task_rq_unlock(rq, p, &rf);
-
 		if (cpuset_locked)
 			cpuset_unlock();
 		goto recheck;
@@ -8051,7 +8045,6 @@ change:
 	preempt_disable();
 	head = splice_balance_callbacks(rq);
 	task_rq_unlock(rq, p, &rf);
-
 	if (pi) {
 		if (cpuset_locked)
 			cpuset_unlock();
@@ -8066,7 +8059,6 @@ change:
 
 unlock:
 	task_rq_unlock(rq, p, &rf);
-
 	if (cpuset_locked)
 		cpuset_unlock();
 	return retval;
@@ -10205,7 +10197,6 @@ void __init sched_init(void)
 	BUG_ON(!sched_class_above(&fair_sched_class, &ext_sched_class));
 	BUG_ON(!sched_class_above(&ext_sched_class, &idle_sched_class));
 #endif
-
 	wait_bit_init();
 
 #ifdef CONFIG_FAIR_GROUP_SCHED
@@ -10850,6 +10841,7 @@ static int cpu_cgroup_css_online(struct cgroup_subsys_state *css)
 	struct task_group *tg = css_tg(css);
 	struct task_group *parent = css_tg(css->parent);
 
+
 	if (parent)
 		sched_online_group(tg, parent);
 
@@ -10885,7 +10877,7 @@ static void cpu_cgroup_css_free(struct cgroup_subsys_state *css)
 	trace_android_vh_cpu_cgroup_css_free(css);
 }
 
-#ifdef CONFIG_RT_GROUP_SCHED
+#if defined(CONFIG_RT_GROUP_SCHED)
 static int cpu_cgroup_can_attach(struct cgroup_taskset *tset)
 {
 	struct task_struct *task;
@@ -10905,7 +10897,6 @@ static void cpu_cgroup_attach(struct cgroup_taskset *tset)
 	struct cgroup_subsys_state *css;
 
 	cgroup_taskset_for_each(task, css, tset) {
-
 		sched_move_task(task);
 	}
 
@@ -11587,7 +11578,6 @@ static struct cftype cpu_legacy_files[] = {
 		.write_u64 = cpu_uclamp_ls_write_u64,
 	},
 #endif
-
 	{ }	/* Terminate */
 };
 

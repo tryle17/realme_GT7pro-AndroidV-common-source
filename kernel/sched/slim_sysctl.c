@@ -87,3 +87,4 @@ static int __init slim_sysfs_init(void)
 }
 
 __initcall(slim_sysfs_init);
+
