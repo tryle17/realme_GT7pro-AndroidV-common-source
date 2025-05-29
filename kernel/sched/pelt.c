@@ -24,6 +24,11 @@
  *  Author: Vincent Guittot <vincent.guittot@linaro.org>
  */
 
+<<<<<<< HEAD
+=======
+#include <trace/hooks/sched.h>
+
+>>>>>>> bugme2/master
 /*
  * Approximate:
  *   val * y^n,    where y^32 ~= 0.5 (~1 scheduling period)
@@ -202,6 +207,11 @@ ___update_load_sum(u64 now, struct sched_avg *sa,
 
 	sa->last_update_time += delta << 10;
 
+<<<<<<< HEAD
+=======
+	trace_android_rvh_update_load_sum(sa, &delta, &sched_pelt_lshift);
+
+>>>>>>> bugme2/master
 	/*
 	 * running is a subset of runnable (weight) so running can't be set if
 	 * runnable is clear. But there are some corner cases where the current

@@ -18,6 +18,7 @@
  ],
   "presubmit": [
     {
+<<<<<<< HEAD
       "name": "CtsAppEnumerationTestCases",
       "options": [
         {
@@ -29,6 +30,8 @@
       ]
     },
     {
+=======
+>>>>>>> bugme2/master
       "name": "CtsSilentUpdateHostTestCases",
       "options": [
         {
@@ -247,6 +250,7 @@
         }
       ]
     }
+<<<<<<< HEAD
   ],
   "kernel-presubmit": [
     {
@@ -288,5 +292,7 @@
     {
       "name": "VtsBootconfigTest"
     }
+=======
+>>>>>>> bugme2/master
   ]
 }

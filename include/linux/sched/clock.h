@@ -13,7 +13,10 @@
  * Please use one of the three interfaces below.
  */
 extern u64 sched_clock(void);
+<<<<<<< HEAD
 extern u64 get_dup_sched_clock(void);
+=======
+>>>>>>> bugme2/master
 
 #if defined(CONFIG_ARCH_WANTS_NO_INSTR) || defined(CONFIG_GENERIC_SCHED_CLOCK)
 extern u64 sched_clock_noinstr(void);

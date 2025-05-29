@@ -810,7 +810,11 @@ static ssize_t show_cpuinfo_cur_freq(struct cpufreq_policy *policy,
 /*
  * show_scaling_governor - show the current policy for the specified CPU
  */
+<<<<<<< HEAD
 static ssize_t show_scaling_governor(struct cpufreq_policy *policy, char *buf)
+=======
+ssize_t show_scaling_governor(struct cpufreq_policy *policy, char *buf)
+>>>>>>> bugme2/master
 {
 	if (policy->policy == CPUFREQ_POLICY_POWERSAVE)
 		return sprintf(buf, "powersave\n");
@@ -825,7 +829,11 @@ static ssize_t show_scaling_governor(struct cpufreq_policy *policy, char *buf)
 /*
  * store_scaling_governor - store policy for the specified CPU
  */
+<<<<<<< HEAD
 static ssize_t store_scaling_governor(struct cpufreq_policy *policy,
+=======
+ssize_t store_scaling_governor(struct cpufreq_policy *policy,
+>>>>>>> bugme2/master
 					const char *buf, size_t count)
 {
 	char str_governor[16];

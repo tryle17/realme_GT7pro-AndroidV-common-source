@@ -6,6 +6,10 @@
 #include <linux/sched/sysctl.h>
 #include <linux/sched/rt.h>
 #include <linux/sched/task.h>
+<<<<<<< HEAD
+=======
+#include <linux/sched/ext.h>
+>>>>>>> bugme2/master
 #include <linux/init.h>
 #include <linux/fs.h>
 #include <linux/mm.h>
@@ -102,6 +106,12 @@ struct task_struct init_task
 #ifdef CONFIG_CGROUP_SCHED
 	.sched_task_group = &root_task_group,
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SLIM_SCHED
+	.scx		= NULL,
+#endif
+>>>>>>> bugme2/master
 	.ptraced	= LIST_HEAD_INIT(init_task.ptraced),
 	.ptrace_entry	= LIST_HEAD_INIT(init_task.ptrace_entry),
 	.real_parent	= &init_task,

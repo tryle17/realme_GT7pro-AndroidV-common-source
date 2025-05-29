@@ -181,9 +181,13 @@ void ovl_dentry_init_flags(struct dentry *dentry, struct dentry *upperdentry,
 bool ovl_dentry_weird(struct dentry *dentry)
 {
 	return dentry->d_flags & (DCACHE_NEED_AUTOMOUNT |
+<<<<<<< HEAD
 				  DCACHE_MANAGE_TRANSIT |
 				  DCACHE_OP_HASH |
 				  DCACHE_OP_COMPARE);
+=======
+				  DCACHE_MANAGE_TRANSIT);
+>>>>>>> bugme2/master
 }
 
 enum ovl_path_type ovl_path_type(struct dentry *dentry)

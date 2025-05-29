@@ -1078,10 +1078,13 @@ struct task_struct {
 
 	struct nameidata		*nameidata;
 
+<<<<<<< HEAD
 #ifdef CONFIG_SYSVIPC
 	struct sysv_sem			sysvsem;
 	struct sysv_shm			sysvshm;
 #endif
+=======
+>>>>>>> bugme2/master
 #ifdef CONFIG_DETECT_HUNG_TASK
 	unsigned long			last_switch_count;
 	unsigned long			last_switch_time;
@@ -1530,12 +1533,26 @@ struct task_struct {
 	ANDROID_KABI_RESERVE(1);
 	ANDROID_KABI_RESERVE(2);
 #endif
+<<<<<<< HEAD
+=======
+#ifdef CONFIG_SYSVIPC
+	ANDROID_KABI_USE(3, struct sysv_sem sysvsem);
+	_ANDROID_KABI_REPLACE(ANDROID_KABI_RESERVE(4); ANDROID_KABI_RESERVE(5), struct sysv_shm sysvshm);
+	ANDROID_KABI_RESERVE(6);
+	ANDROID_KABI_RESERVE(7);
+	ANDROID_KABI_RESERVE(8);
+#else
+>>>>>>> bugme2/master
 	ANDROID_KABI_RESERVE(3);
 	ANDROID_KABI_RESERVE(4);
 	ANDROID_KABI_RESERVE(5);
 	ANDROID_KABI_RESERVE(6);
 	ANDROID_KABI_RESERVE(7);
 	ANDROID_KABI_RESERVE(8);
+<<<<<<< HEAD
+=======
+#endif
+>>>>>>> bugme2/master
 
 #ifdef CONFIG_RV
 	/*
@@ -1932,7 +1949,10 @@ static inline int task_nice(const struct task_struct *p)
 	return PRIO_TO_NICE((p)->static_prio);
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> bugme2/master
 extern int can_nice(const struct task_struct *p, const int nice);
 extern int task_curr(const struct task_struct *p);
 extern int idle_cpu(int cpu);

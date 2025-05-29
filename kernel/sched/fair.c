@@ -554,7 +554,11 @@ static int cfs_rq_is_idle(struct cfs_rq *cfs_rq)
 
 static int se_is_idle(struct sched_entity *se)
 {
+<<<<<<< HEAD
 	return task_has_idle_policy(task_of(se));
+=======
+	return 0;
+>>>>>>> bugme2/master
 }
 
 #endif	/* CONFIG_FAIR_GROUP_SCHED */
@@ -3194,7 +3198,11 @@ static void reset_ptenuma_scan(struct task_struct *p)
 	p->mm->numa_scan_offset = 0;
 }
 
+<<<<<<< HEAD
 static bool vma_is_accessed(struct mm_struct *mm, struct vm_area_struct *vma)
+=======
+static bool vma_is_accessed(struct vm_area_struct *vma)
+>>>>>>> bugme2/master
 {
 	unsigned long pids;
 	/*
@@ -3206,6 +3214,7 @@ static bool vma_is_accessed(struct mm_struct *mm, struct vm_area_struct *vma)
 	if (READ_ONCE(current->mm->numa_scan_seq) < 2)
 		return true;
 
+<<<<<<< HEAD
 	pids = vma->numab_state->pids_active[0] | vma->numab_state->pids_active[1];
 	if (test_bit(hash_32(current->pid, ilog2(BITS_PER_LONG)), &pids))
 		return true;
@@ -3229,6 +3238,10 @@ static bool vma_is_accessed(struct mm_struct *mm, struct vm_area_struct *vma)
 		return true;
 
 	return false;
+=======
+	pids = vma->numab_state->access_pids[0] | vma->numab_state->access_pids[1];
+	return test_bit(hash_32(current->pid, ilog2(BITS_PER_LONG)), &pids);
+>>>>>>> bugme2/master
 }
 
 #define VMA_PID_RESET_PERIOD (4 * sysctl_numa_balancing_scan_delay)
@@ -3248,8 +3261,11 @@ static void task_numa_work(struct callback_head *work)
 	unsigned long nr_pte_updates = 0;
 	long pages, virtpages;
 	struct vma_iterator vmi;
+<<<<<<< HEAD
 	bool vma_pids_skipped;
 	bool vma_pids_forced = false;
+=======
+>>>>>>> bugme2/master
 
 	SCHED_WARN_ON(p != container_of(work, struct task_struct, numa_work));
 
@@ -3292,6 +3308,10 @@ static void task_numa_work(struct callback_head *work)
 	 */
 	p->node_stamp += 2 * TICK_NSEC;
 
+<<<<<<< HEAD
+=======
+	start = mm->numa_scan_offset;
+>>>>>>> bugme2/master
 	pages = sysctl_numa_balancing_scan_size;
 	pages <<= 20 - PAGE_SHIFT; /* MB in pages */
 	virtpages = pages * 8;	   /* Scan up to this much virtual space */
@@ -3301,6 +3321,7 @@ static void task_numa_work(struct callback_head *work)
 
 	if (!mmap_read_trylock(mm))
 		return;
+<<<<<<< HEAD
 
 	/*
 	 * VMAs are skipped if the current PID has not trapped a fault within
@@ -3311,6 +3332,8 @@ static void task_numa_work(struct callback_head *work)
 
 retry_pids:
 	start = mm->numa_scan_offset;
+=======
+>>>>>>> bugme2/master
 	vma_iter_init(&vmi, mm, start);
 	vma = vma_next(&vmi);
 	if (!vma) {
@@ -3323,7 +3346,10 @@ retry_pids:
 	do {
 		if (!vma_migratable(vma) || !vma_policy_mof(vma) ||
 			is_vm_hugetlb_page(vma) || (vma->vm_flags & VM_MIXEDMAP)) {
+<<<<<<< HEAD
 			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_UNSUITABLE);
+=======
+>>>>>>> bugme2/master
 			continue;
 		}
 
@@ -3334,19 +3360,29 @@ retry_pids:
 		 * as migrating the pages will be of marginal benefit.
 		 */
 		if (!vma->vm_mm ||
+<<<<<<< HEAD
 		    (vma->vm_file && (vma->vm_flags & (VM_READ|VM_WRITE)) == (VM_READ))) {
 			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_SHARED_RO);
 			continue;
 		}
+=======
+		    (vma->vm_file && (vma->vm_flags & (VM_READ|VM_WRITE)) == (VM_READ)))
+			continue;
+>>>>>>> bugme2/master
 
 		/*
 		 * Skip inaccessible VMAs to avoid any confusion between
 		 * PROT_NONE and NUMA hinting ptes
 		 */
+<<<<<<< HEAD
 		if (!vma_is_accessible(vma)) {
 			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_INACCESSIBLE);
 			continue;
 		}
+=======
+		if (!vma_is_accessible(vma))
+			continue;
+>>>>>>> bugme2/master
 
 		/* Initialise new per-VMA NUMAB state. */
 		if (!vma->numab_state) {
@@ -3359,6 +3395,7 @@ retry_pids:
 				msecs_to_jiffies(sysctl_numa_balancing_scan_delay);
 
 			/* Reset happens after 4 times scan delay of scan start */
+<<<<<<< HEAD
 			vma->numab_state->pids_active_reset =  vma->numab_state->next_scan +
 				msecs_to_jiffies(VMA_PID_RESET_PERIOD);
 
@@ -3368,6 +3405,10 @@ retry_pids:
 			 * first scan:
 			 */
 			 vma->numab_state->prev_scan_seq = mm->numa_scan_seq - 1;
+=======
+			vma->numab_state->next_pid_reset =  vma->numab_state->next_scan +
+				msecs_to_jiffies(VMA_PID_RESET_PERIOD);
+>>>>>>> bugme2/master
 		}
 
 		/*
@@ -3375,6 +3416,7 @@ retry_pids:
 		 * delay the scan for new VMAs.
 		 */
 		if (mm->numa_scan_seq && time_before(jiffies,
+<<<<<<< HEAD
 						vma->numab_state->next_scan)) {
 			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_SCAN_DELAY);
 			continue;
@@ -3404,6 +3446,25 @@ retry_pids:
 			vma_pids_skipped = true;
 			trace_sched_skip_vma_numa(mm, vma, NUMAB_SKIP_PID_INACTIVE);
 			continue;
+=======
+						vma->numab_state->next_scan))
+			continue;
+
+		/* Do not scan the VMA if task has not accessed */
+		if (!vma_is_accessed(vma))
+			continue;
+
+		/*
+		 * RESET access PIDs regularly for old VMAs. Resetting after checking
+		 * vma for recent access to avoid clearing PID info before access..
+		 */
+		if (mm->numa_scan_seq &&
+				time_after(jiffies, vma->numab_state->next_pid_reset)) {
+			vma->numab_state->next_pid_reset = vma->numab_state->next_pid_reset +
+				msecs_to_jiffies(VMA_PID_RESET_PERIOD);
+			vma->numab_state->access_pids[0] = READ_ONCE(vma->numab_state->access_pids[1]);
+			vma->numab_state->access_pids[1] = 0;
+>>>>>>> bugme2/master
 		}
 
 		do {
@@ -3430,6 +3491,7 @@ retry_pids:
 
 			cond_resched();
 		} while (end != vma->vm_end);
+<<<<<<< HEAD
 
 		/* VMA scan is complete, do not scan until next sequence. */
 		vma->numab_state->prev_scan_seq = mm->numa_scan_seq;
@@ -3452,6 +3514,10 @@ retry_pids:
 		goto retry_pids;
 	}
 
+=======
+	} for_each_vma(vmi, vma);
+
+>>>>>>> bugme2/master
 out:
 	/*
 	 * It is possible to reach the end of the VMA list but the last few
@@ -6676,23 +6742,32 @@ static inline void hrtick_update(struct rq *rq)
 #ifdef CONFIG_SMP
 static inline bool cpu_overutilized(int cpu)
 {
+<<<<<<< HEAD
 	unsigned long  rq_util_min, rq_util_max;
+=======
+	unsigned long rq_util_min = uclamp_rq_get(cpu_rq(cpu), UCLAMP_MIN);
+	unsigned long rq_util_max = uclamp_rq_get(cpu_rq(cpu), UCLAMP_MAX);
+>>>>>>> bugme2/master
 	int overutilized = -1;
 
 	trace_android_rvh_cpu_overutilized(cpu, &overutilized);
 	if (overutilized != -1)
 		return overutilized;
 
+<<<<<<< HEAD
 	if (!sched_energy_enabled())
 		return false;
 
 	rq_util_min = uclamp_rq_get(cpu_rq(cpu), UCLAMP_MIN);
 	rq_util_max = uclamp_rq_get(cpu_rq(cpu), UCLAMP_MAX);
 
+=======
+>>>>>>> bugme2/master
 	/* Return true only if the utilization doesn't fit CPU's capacity */
 	return !util_fits_cpu(cpu_util_cfs(cpu), rq_util_min, rq_util_max, cpu);
 }
 
+<<<<<<< HEAD
 static inline void set_rd_overutilized_status(struct root_domain *rd,
 					      unsigned int status)
 {
@@ -6717,6 +6792,17 @@ static inline void check_update_overutilized_status(struct rq *rq)
 }
 #else
 static inline void check_update_overutilized_status(struct rq *rq) { }
+=======
+static inline void update_overutilized_status(struct rq *rq)
+{
+	if (!READ_ONCE(rq->rd->overutilized) && cpu_overutilized(rq->cpu)) {
+		WRITE_ONCE(rq->rd->overutilized, SG_OVERUTILIZED);
+		trace_sched_overutilized_tp(rq->rd, SG_OVERUTILIZED);
+	}
+}
+#else
+static inline void update_overutilized_status(struct rq *rq) { }
+>>>>>>> bugme2/master
 #endif
 
 /* Runqueue only has SCHED_IDLE tasks enqueued */
@@ -6821,7 +6907,11 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 	 * and the following generally works well enough in practice.
 	 */
 	if (!task_new)
+<<<<<<< HEAD
 		check_update_overutilized_status(rq);
+=======
+		update_overutilized_status(rq);
+>>>>>>> bugme2/master
 
 enqueue_throttle:
 	assert_list_leaf_cfs_rq(rq);
@@ -8367,7 +8457,20 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
 	if (test_tsk_need_resched(curr))
 		return;
 
+<<<<<<< HEAD
 	if (!sched_feat(WAKEUP_PREEMPTION))
+=======
+	/* Idle tasks are by definition preempted by non-idle tasks. */
+	if (unlikely(task_has_idle_policy(curr)) &&
+	    likely(!task_has_idle_policy(p)))
+		goto preempt;
+
+	/*
+	 * Batch and idle tasks do not preempt non-idle tasks (their preemption
+	 * is driven by the tick):
+	 */
+	if (unlikely(p->policy != SCHED_NORMAL) || !sched_feat(WAKEUP_PREEMPTION))
+>>>>>>> bugme2/master
 		return;
 
 	find_matching_se(&se, &pse);
@@ -8377,7 +8480,11 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
 	pse_is_idle = se_is_idle(pse);
 
 	/*
+<<<<<<< HEAD
 	 * Preempt an idle entity in favor of a non-idle entity (and don't preempt
+=======
+	 * Preempt an idle group in favor of a non-idle group (and don't preempt
+>>>>>>> bugme2/master
 	 * in the inverse case).
 	 */
 	if (cse_is_idle && !pse_is_idle)
@@ -8385,12 +8492,15 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
 	if (cse_is_idle != pse_is_idle)
 		return;
 
+<<<<<<< HEAD
 	/*
 	 * BATCH and IDLE tasks do not preempt others.
 	 */
 	if (unlikely(p->policy != SCHED_NORMAL))
 		return;
 
+=======
+>>>>>>> bugme2/master
 	cfs_rq = cfs_rq_of(se);
 	update_curr(cfs_rq);
 
@@ -8400,7 +8510,10 @@ static void check_preempt_wakeup(struct rq *rq, struct task_struct *p, int wake_
 		goto preempt;
 	if (ignore)
 		return;
+<<<<<<< HEAD
 
+=======
+>>>>>>> bugme2/master
 	/*
 	 * XXX pick_eevdf(cfs_rq) != se ?
 	 */
@@ -9162,8 +9275,17 @@ static int detach_tasks(struct lb_env *env)
 			break;
 
 		env->loop++;
+<<<<<<< HEAD
 		/* We've more or less seen every task there is, call it quits */
 		if (env->loop > env->loop_max)
+=======
+		/*
+		 * We've more or less seen every task there is, call it quits
+		 * unless we haven't found any movable task yet.
+		 */
+		if (env->loop > env->loop_max &&
+		    !(env->flags & LBF_ALL_PINNED))
+>>>>>>> bugme2/master
 			break;
 
 		/* take a breather every nr_migrate tasks */
@@ -9208,7 +9330,11 @@ static int detach_tasks(struct lb_env *env)
 		case migrate_util:
 			util = task_util_est(p);
 
+<<<<<<< HEAD
 			if (shr_bound(util, env->sd->nr_balance_failed) > env->imbalance)
+=======
+			if (util > env->imbalance)
+>>>>>>> bugme2/master
 				goto next;
 
 			env->imbalance -= util;
@@ -10715,6 +10841,7 @@ next_group:
 		env->fbq_type = fbq_classify_group(&sds->busiest_stat);
 
 	if (!env->sd->parent) {
+<<<<<<< HEAD
 		/* update overload indicator if we are at root domain */
 		WRITE_ONCE(env->dst_rq->rd->overload, sg_status & SG_OVERLOAD);
 
@@ -10723,6 +10850,21 @@ next_group:
 					   sg_status & SG_OVERUTILIZED);
 	} else if (sg_status & SG_OVERUTILIZED) {
 		set_rd_overutilized_status(env->dst_rq->rd, SG_OVERUTILIZED);
+=======
+		struct root_domain *rd = env->dst_rq->rd;
+
+		/* update overload indicator if we are at root domain */
+		WRITE_ONCE(rd->overload, sg_status & SG_OVERLOAD);
+
+		/* Update over-utilization (tipping point, U >= 0) indicator */
+		WRITE_ONCE(rd->overutilized, sg_status & SG_OVERUTILIZED);
+		trace_sched_overutilized_tp(rd, sg_status & SG_OVERUTILIZED);
+	} else if (sg_status & SG_OVERUTILIZED) {
+		struct root_domain *rd = env->dst_rq->rd;
+
+		WRITE_ONCE(rd->overutilized, SG_OVERUTILIZED);
+		trace_sched_overutilized_tp(rd, SG_OVERUTILIZED);
+>>>>>>> bugme2/master
 	}
 
 	update_idle_cpu_scan(env, sum_util);
@@ -11465,7 +11607,13 @@ more_balance:
 
 		if (env.flags & LBF_NEED_BREAK) {
 			env.flags &= ~LBF_NEED_BREAK;
+<<<<<<< HEAD
 			goto more_balance;
+=======
+			/* Stop if we tried all running tasks */
+			if (env.loop < busiest->nr_running)
+				goto more_balance;
+>>>>>>> bugme2/master
 		}
 
 		/*
@@ -12741,7 +12889,11 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
 		task_tick_numa(rq, curr);
 
 	update_misfit_status(curr, rq);
+<<<<<<< HEAD
 	check_update_overutilized_status(task_rq(curr));
+=======
+	update_overutilized_status(task_rq(curr));
+>>>>>>> bugme2/master
 
 	task_tick_core(rq, curr);
 }

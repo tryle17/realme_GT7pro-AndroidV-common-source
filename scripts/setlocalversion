@@ -108,6 +108,7 @@ scm_version()
 	if ${no_dirty}; then
 		return
 	fi
+<<<<<<< HEAD
 
 	# Check for uncommitted changes.
 	# This script must avoid any write attempt to the source tree, which
@@ -125,6 +126,8 @@ scm_version()
 	} | read dummy; then
 		printf '%s' -dirty
 	fi
+=======
+>>>>>>> bugme2/master
 }
 
 collect_files()

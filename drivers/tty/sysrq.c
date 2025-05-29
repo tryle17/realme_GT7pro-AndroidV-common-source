@@ -524,6 +524,10 @@ static const struct sysrq_key_op *sysrq_key_table[62] = {
 	NULL,				/* P */
 	NULL,				/* Q */
 	NULL,				/* R */
+<<<<<<< HEAD
+=======
+	/* S: May be registered by sched_ext for resetting */
+>>>>>>> bugme2/master
 	NULL,				/* S */
 	NULL,				/* T */
 	NULL,				/* U */

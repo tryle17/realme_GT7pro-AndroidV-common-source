@@ -19,6 +19,10 @@ Scheduler
     sched-nice-design
     sched-rt-group
     sched-stats
+<<<<<<< HEAD
+=======
+    sched-ext
+>>>>>>> bugme2/master
     sched-debug
 
     text_files

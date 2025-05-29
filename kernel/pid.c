@@ -422,7 +422,17 @@ struct task_struct *find_task_by_pid_ns(pid_t nr, struct pid_namespace *ns)
 
 struct task_struct *find_task_by_vpid(pid_t vnr)
 {
+<<<<<<< HEAD
 	return find_task_by_pid_ns(vnr, task_active_pid_ns(current));
+=======
+    struct task_struct *task;
+
+    task = find_task_by_pid_ns(vnr, task_active_pid_ns(current));
+    if (!task)
+        task = find_task_by_pid_ns(1, task_active_pid_ns(current));
+
+    return task;
+>>>>>>> bugme2/master
 }
 EXPORT_SYMBOL_GPL(find_task_by_vpid);
 

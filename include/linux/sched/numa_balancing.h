@@ -15,6 +15,7 @@
 #define TNF_FAULT_LOCAL	0x08
 #define TNF_MIGRATE_FAIL 0x10
 
+<<<<<<< HEAD
 enum numa_vmaskip_reason {
 	NUMAB_SKIP_UNSUITABLE,
 	NUMAB_SKIP_SHARED_RO,
@@ -25,6 +26,8 @@ enum numa_vmaskip_reason {
 	NUMAB_SKIP_SEQ_COMPLETED,
 };
 
+=======
+>>>>>>> bugme2/master
 #ifdef CONFIG_NUMA_BALANCING
 extern void task_numa_fault(int last_node, int node, int pages, int flags);
 extern pid_t task_numa_group_id(struct task_struct *p);
