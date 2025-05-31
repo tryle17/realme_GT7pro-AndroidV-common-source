@@ -284,6 +284,8 @@ do {										\
 	__ret;									\
 })
 
+//#include "./slim_walt.c"
+
 /* @mask is constant, always inline to cull unnecessary branches */
 static __always_inline bool scx_kf_allowed(u32 mask)
 {
@@ -602,6 +604,7 @@ static bool scx_dsq_priq_less(struct rb_node *node_a,
 		container_of(node_a, struct sched_ext_entity, dsq_node.priq);
 	const struct sched_ext_entity *b =
 		container_of(node_b, struct sched_ext_entity, dsq_node.priq);
+
 	return time_before64(a->dsq_vtime, b->dsq_vtime);
 }
 
@@ -674,6 +677,7 @@ static void task_unlink_from_dsq(struct task_struct *p,
 	} else {
 		list_del_init(&p->scx->dsq_node.fifo);
 	}
+
 }
 
 static bool task_linked_on_dsq(struct task_struct *p)
@@ -1014,6 +1018,9 @@ static void dequeue_task_scx(struct rq *rq, struct task_struct *p, int deq_flags
 		update_curr_scx(rq);
 		SCX_CALL_OP_TASK(SCX_KF_REST, stopping, p, false);
 	}
+
+	//if(task_current(rq, p))
+	//	scx_update_task_ravg(p, rq, PUT_PREV_TASK, rq->clock);
 
 	if (SCX_HAS_OP(quiescent))
 		SCX_CALL_OP_TASK(SCX_KF_REST, quiescent, p, deq_flags);
@@ -1649,6 +1656,9 @@ static void set_next_task_scx(struct rq *rq, struct task_struct *p, bool first)
 	if (SCX_HAS_OP(running) && (p->scx->flags & SCX_TASK_QUEUED))
 		SCX_CALL_OP_TASK(SCX_KF_REST, running, p);
 
+	//if(p->scx->flags & SCX_TASK_QUEUED)
+	//	scx_update_task_ravg(p, rq, PICK_NEXT_TASK, rq->clock);
+
 	watchdog_unwatch_task(p, true);
 
 	/*
@@ -1704,6 +1714,10 @@ static void put_prev_task_scx(struct rq *rq, struct task_struct *p)
 	/* see dequeue_task_scx() on why we skip when !QUEUED */
 	if (SCX_HAS_OP(stopping) && (p->scx->flags & SCX_TASK_QUEUED))
 		SCX_CALL_OP_TASK(SCX_KF_REST, stopping, p, true);
+
+	//if(p->scx->flags & SCX_TASK_QUEUED)
+	//	scx_update_task_ravg(p, rq, PUT_PREV_TASK, rq->clock);
+
 
 	/*
 	 * If we're being called from put_prev_task_balance(), balance_scx() may
@@ -2140,7 +2154,7 @@ static void scx_watchdog_workfn(struct work_struct *work)
 static void task_tick_scx(struct rq *rq, struct task_struct *curr, int queued)
 {
 	update_curr_scx(rq);
-
+	//scx_update_task_ravg(curr, rq, TASK_UPDATE, rq->clock);
 	/*
 	 * While disabling, always resched and refresh core-sched timestamp as
 	 * we can't trust the slice management or ops.core_sched_before().
@@ -2175,6 +2189,7 @@ static int scx_ops_prepare_task(struct task_struct *p, struct task_group *tg)
 			return ret;
 		}
 	}
+	//scx_sched_init_task(p);
 
 	if (p->scx->disallow) {
 		struct rq *rq;
@@ -2796,6 +2811,8 @@ static int scx_ops_enable(struct sched_ext_ops *ops)
 		ret = -EBUSY;
 		goto err_unlock;
 	}
+
+	//slim_walt_enable(true);
 
 	/*
 	 * Set scx_ops, transition to PREPPING and clear exit info to arm the

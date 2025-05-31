@@ -153,12 +153,14 @@ static inline void scx_notify_pick_next_task(struct rq *rq,
 	__scx_notify_pick_next_task(rq, p, active);
 }
 
+//extern void scx_scheduler_tick(void);
 static inline void scx_notify_sched_tick(void)
 {
 	unsigned long last_check;
 
 	if (!scx_enabled())
 		return;
+	//scx_scheduler_tick();
 
 	last_check = scx_watchdog_timestamp;
 	if (unlikely(time_after(jiffies, last_check + scx_watchdog_timeout))) {
