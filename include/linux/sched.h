@@ -1526,6 +1526,7 @@ struct task_struct {
 #else
 	ANDROID_KABI_RESERVE(1);
 	ANDROID_KABI_RESERVE(2);
+#endif
 #ifdef CONFIG_SYSVIPC
 	ANDROID_KABI_USE(3, struct sysv_sem sysvsem);
 	_ANDROID_KABI_REPLACE(ANDROID_KABI_RESERVE(4); ANDROID_KABI_RESERVE(5), struct sysv_shm sysvshm);
