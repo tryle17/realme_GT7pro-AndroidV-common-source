@@ -482,6 +482,7 @@ regular_folio:
 				trace_android_vh_madvise_pageout_swap_entry(entry,
 					swp_swapcount(entry), NULL);
 			continue;
+		}
 
 		folio = vm_normal_folio(vma, addr, ptent);
 		if (!folio || folio_is_zone_device(folio))
