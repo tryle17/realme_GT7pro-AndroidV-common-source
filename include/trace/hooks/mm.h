@@ -154,6 +154,9 @@ DECLARE_HOOK(android_vh_tune_mmap_readaround,
 DECLARE_HOOK(android_vh_meminfo_proc_show,
 	TP_PROTO(struct seq_file *m),
 	TP_ARGS(m));
+DECLARE_RESTRICTED_HOOK(android_rvh_meminfo_proc_show,
+	TP_PROTO(struct seq_file *m),
+	TP_ARGS(m), 1);
 DECLARE_HOOK(android_vh_exit_mm,
 	TP_PROTO(struct mm_struct *mm),
 	TP_ARGS(mm));
@@ -297,6 +300,9 @@ struct slabinfo;
 DECLARE_HOOK(android_vh_customize_alloc_gfp,
 	TP_PROTO(gfp_t *alloc_gfp, unsigned int order),
 	TP_ARGS(alloc_gfp, order));
+DECLARE_HOOK(android_vh_madvise_pageout_swap_entry,
+	TP_PROTO(swp_entry_t entry, int swapcount, void *priv),
+	TP_ARGS(entry, swapcount, priv));
 DECLARE_HOOK(android_vh_madvise_swapin_walk_pmd_entry,
 	TP_PROTO(swp_entry_t entry),
 	TP_ARGS(entry));
