@@ -17,10 +17,6 @@ struct mmc_queue;
  * Following tracepoints are not exported in tracefs and provide a
  * mechanism for vendor modules to hook and extend functionality
  */
-DECLARE_HOOK(android_vh_mmc_update_mmc_queue,
-	TP_PROTO(struct mmc_card *card, struct mmc_queue *mq),
-	TP_ARGS(card, mq));
-
 DECLARE_HOOK(android_vh_mmc_sdio_pm_flag_set,
 	TP_PROTO(struct mmc_host *host),
 	TP_ARGS(host));
