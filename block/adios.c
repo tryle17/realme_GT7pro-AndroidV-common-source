@@ -22,7 +22,7 @@
 #include "blk-mq.h"
 #include "blk-mq-sched.h"
 
-#define ADIOS_VERSION "2.0.0-rc4"
+#define ADIOS_VERSION "2.0.0"
 
 // Define operation types supported by ADIOS
 enum adios_op_type {
@@ -324,6 +324,9 @@ static void latency_model_update(
 	bool time_elapsed;
 	bool small_processed = false, large_processed = false;
 	struct per_cpu_lm_buckets *aggr = ad->aggr_buckets;
+	struct latency_bucket_small *asb;
+	struct latency_bucket_large *alb;
+	struct per_cpu_lm_buckets *pcpu_b;
 	unsigned long flags;
 	int cpu;
 
@@ -333,17 +336,19 @@ static void latency_model_update(
 
 	// Aggregate data from all CPUs and reset per-cpu buckets.
 	for_each_possible_cpu(cpu) {
-		struct per_cpu_lm_buckets *pcpu_b = per_cpu_ptr(model->pcpu_buckets, cpu);
+		pcpu_b = per_cpu_ptr(model->pcpu_buckets, cpu);
 
 		for (u8 i = 0; i < LM_LAT_BUCKET_COUNT; i++) {
 			if (pcpu_b->small_bucket[i].count) {
-				aggr->small_bucket[i].count += pcpu_b->small_bucket[i].count;
-				aggr->small_bucket[i].sum_latency += pcpu_b->small_bucket[i].sum_latency;
+				asb = &aggr->small_bucket[i];
+				asb->count          += pcpu_b->small_bucket[i].count;
+				asb->sum_latency    += pcpu_b->small_bucket[i].sum_latency;
 			}
 			if (pcpu_b->large_bucket[i].count) {
-				aggr->large_bucket[i].count += pcpu_b->large_bucket[i].count;
-				aggr->large_bucket[i].sum_latency += pcpu_b->large_bucket[i].sum_latency;
-				aggr->large_bucket[i].sum_block_size += pcpu_b->large_bucket[i].sum_block_size;
+				alb = &aggr->large_bucket[i];
+				alb->count          += pcpu_b->large_bucket[i].count;
+				alb->sum_latency    += pcpu_b->large_bucket[i].sum_latency;
+				alb->sum_block_size += pcpu_b->large_bucket[i].sum_block_size;
 			}
 		}
 		// Reset per-cpu buckets after aggregating
