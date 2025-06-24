@@ -1019,7 +1019,6 @@
   __tracepoint_android_vh_adjust_kvmalloc_flags
   __tracepoint_android_vh_check_uninterruptible_tasks
   __tracepoint_android_vh_check_uninterruptible_tasks_dn
-  wq_worker_comm
   __tracepoint_android_vh_meminfo_proc_show
   __traceiter_android_vh_meminfo_proc_show
   __tracepoint_android_rvh_set_balance_anon_file_reclaim

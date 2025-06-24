@@ -2669,7 +2669,7 @@ extern void sched_change_guard_fini(struct sched_change_guard *cg, int flags);
  * case guarantees that the rq clock is up-to-date inside and after the block.
  */
 #define SCHED_CHANGE_BLOCK(__rq, __p, __flags)					\
-	for (struct sched_change_guard __cg =					\
+	for (struct sched_change_guard __cg =						\
 			sched_change_guard_init(__rq, __p, __flags);		\
 	     !__cg.done; sched_change_guard_fini(&__cg, __flags))
 
