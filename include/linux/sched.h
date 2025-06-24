@@ -73,6 +73,8 @@ struct task_delay_info;
 struct task_group;
 struct user_event_mm;
 
+#include <linux/sched/ext.h>
+
 /*
  * Task state bitmask. NOTE! These bits are also
  * encoded in fs/proc/array.c: get_task_state().
@@ -791,6 +793,9 @@ struct task_struct {
 #endif
 
 #ifdef CONFIG_CGROUP_SCHED
+#ifdef CONFIG_SCHED_CLASS_EXT
+	struct sched_ext_entity		scx;
+#endif
 	struct task_group		*sched_task_group;
 #endif
 
