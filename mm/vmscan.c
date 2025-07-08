@@ -3170,7 +3170,6 @@ static void get_scan_count(struct lruvec *lruvec, struct scan_control *sc,
 	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
 	struct mem_cgroup *memcg = lruvec_memcg(lruvec);
 	unsigned long anon_cost, file_cost, total_cost;
-	struct sysinfo si;
 	int swappiness = mem_cgroup_swappiness(memcg);
 	u64 fraction[ANON_AND_FILE];
 	u64 denominator = 0;	/* gcc */
@@ -3218,14 +3217,6 @@ static void get_scan_count(struct lruvec *lruvec, struct scan_control *sc,
 	}
 
 	trace_android_rvh_set_balance_anon_file_reclaim(&balance_anon_file_reclaim);
-
-	/* Bypass anon_min_ratio if swap usage is too high */
-	si_meminfo(&si);
-	if (si.totalswap > 0 && si.freeswap < si.totalswap / 10) { /* Swap usage > 90% */
-		sc->anon_below_min = 0; /* Allow reclaiming anon pages */
-		scan_balance = SCAN_ANON; /* Prioritize anon reclaim */
-		goto out;
-	}
 
 	/*
 	 * Force-scan anon if clean file pages is under vm.clean_low_ratio
@@ -3426,8 +3417,6 @@ static void prepare_workingset_protection(pg_data_t *pgdat, struct scan_control 
 {
 	unsigned long node_mem_total;
 	struct sysinfo i;
-	unsigned long free_mem, swap_free, swap_total;
-	u8 dynamic_anon_ratio, dynamic_clean_ratio;
 
 	if (!(sysctl_workingset_protection)) {
 		sc->anon_below_min = 0;
@@ -3445,28 +3434,14 @@ static void prepare_workingset_protection(pg_data_t *pgdat, struct scan_control 
 		si_meminfo(&i);
 #endif //CONFIG_NUMA
 		node_mem_total = i.totalram;
-		free_mem = i.freeram;
-		swap_free = i.freeswap;
-		swap_total = i.totalswap;
-
-		/* Dynamically adjust protection ratios based on memory and swap pressure */
-		if (free_mem < (node_mem_total / 80) || /* Less than ~200MB free */
-		    (swap_total > 0 && swap_free < swap_total / 10)) { /* Swap usage > 90% */
-			dynamic_anon_ratio = sysctl_anon_min_ratio / 2;  /* Halve protection */
-			dynamic_clean_ratio = sysctl_clean_min_ratio / 2;
-			if (dynamic_anon_ratio < 2)
-				dynamic_anon_ratio = 2;  /* Minimum 2% protection */
-			if (dynamic_clean_ratio < 2)
-				dynamic_clean_ratio = 2;
-		} else {
-			dynamic_anon_ratio = sysctl_anon_min_ratio;
-			dynamic_clean_ratio = sysctl_clean_min_ratio;
-		}
 
 		if (unlikely(workingset_protection_prev_totalram != node_mem_total)) {
-			sysctl_anon_min_ratio_kb  = node_mem_total * dynamic_anon_ratio  / 100;
-			sysctl_clean_low_ratio_kb = node_mem_total * sysctl_clean_low_ratio / 100;
-			sysctl_clean_min_ratio_kb = node_mem_total * dynamic_clean_ratio / 100;
+			sysctl_anon_min_ratio_kb  =
+				node_mem_total * sysctl_anon_min_ratio  / 100;
+			sysctl_clean_low_ratio_kb =
+				node_mem_total * sysctl_clean_low_ratio / 100;
+			sysctl_clean_min_ratio_kb =
+				node_mem_total * sysctl_clean_min_ratio / 100;
 			workingset_protection_prev_totalram = node_mem_total;
 		}
 	}
