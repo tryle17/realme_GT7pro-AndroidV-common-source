@@ -538,9 +538,7 @@ void cpufreq_disable_fast_switch(struct cpufreq_policy *policy)
 EXPORT_SYMBOL_GPL(cpufreq_disable_fast_switch);
 
 static unsigned int __resolve_freq(struct cpufreq_policy *policy,
-				   unsigned int target_freq,
-				   unsigned int min, unsigned int max,
-				   unsigned int relation)
+		unsigned int target_freq, unsigned int relation)
 {
 	unsigned int idx;
 	unsigned int old_target_freq = target_freq;
@@ -551,7 +549,7 @@ static unsigned int __resolve_freq(struct cpufreq_policy *policy,
 	if (!policy->freq_table)
 		return target_freq;
 
-	idx = cpufreq_frequency_table_target(policy, target_freq, min, max, relation);
+	idx = cpufreq_frequency_table_target(policy, target_freq, relation);
 	policy->cached_resolved_idx = idx;
 	policy->cached_target_freq = target_freq;
 	return policy->freq_table[idx].frequency;
@@ -2650,20 +2648,10 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
 	 * no frequency resolution will neither overshoot the requested maximum
 	 * nor undershoot the requested minimum.
 	 */
-<<<<<<< HEAD
-	WRITE_ONCE(policy->max, __resolve_freq(policy, new_data.max,
-					       new_data.min, new_data.max,
-					       CPUFREQ_RELATION_H));
-	new_data.min = __resolve_freq(policy, new_data.min, new_data.min,
-				      new_data.max, CPUFREQ_RELATION_L);
-	WRITE_ONCE(policy->min, new_data.min > policy->max ? policy->max : new_data.min);
-
-=======
 	policy->min = new_data.min;
 	policy->max = new_data.max;
 	policy->min = __resolve_freq(policy, policy->min, CPUFREQ_RELATION_L);
 	policy->max = __resolve_freq(policy, policy->max, CPUFREQ_RELATION_H);
->>>>>>> google-common/android15-6.6-lts
 	trace_cpu_frequency_limits(policy);
 
 	policy->cached_target_freq = UINT_MAX;
