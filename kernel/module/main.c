@@ -2391,10 +2391,10 @@ static char *custom_module_blacklist[] = {
 #endif
 #if IS_BUILTIN(CONFIG_ZRAM)
     "oplus_bsp_hybridswap_zram",
-	"oplus_bsp_zram_opt.ko",
+	"oplus_bsp_zram_opt",
 #endif
 #if IS_BUILTIN(CONFIG_ZSMALLOC)
-    "oplus_bsp_zsmalloc.ko",
+    "oplus_bsp_zsmalloc",
 #endif
 #if IS_BUILTIN(CONFIG_TCP_CONG_BBR)
     "oplus_network_tuning",
