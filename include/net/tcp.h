@@ -912,11 +912,6 @@ static inline u32 tcp_skb_timestamp(const struct sk_buff *skb)
 	return tcp_ns_to_ts(skb->skb_mstamp_ns);
 }
 
-static inline u32 tcp_stamp32_us_delta(u32 t1, u32 t0)
-{
-	return max_t(s32, t1 - t0, 0);
-}
-
 /* provide the departure time in us unit */
 static inline u64 tcp_skb_timestamp_us(const struct sk_buff *skb)
 {
