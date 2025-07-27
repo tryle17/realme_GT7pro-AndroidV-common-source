@@ -816,7 +816,6 @@ config MMU_NOTIFIER
 
 config KSM
 	bool "Enable KSM for page merging"
-	default y
 	depends on MMU
 	select XXHASH
 	help
