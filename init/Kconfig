@@ -2047,3 +2047,12 @@ config ARCH_HAS_SYSCALL_WRAPPER
 if 64BIT
 source "init/Kconfig.gki"
 endif
+source "init/Kconfig.gki-debug"
+
+menu "BrokeStar"
+
+config ARCH_ORYON
+	bool
+	default y
+
+endmenu
