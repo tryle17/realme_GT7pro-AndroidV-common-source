@@ -1030,7 +1030,6 @@ struct task_struct {
 	int __user			*clear_child_tid;
 
 	/* PF_KTHREAD | PF_IO_WORKER */
-	/* Otherwise used as task_dma_buf_info pointer */
 	void				*worker_private;
 
 	u64				utime;
@@ -1545,6 +1544,9 @@ struct task_struct {
 	 */
 	struct callback_head		l1d_flush_kill;
 #endif
+
+	struct task_dma_buf_info *dmabuf_info;
+
 #ifdef CONFIG_SLIM_SCHED
 	ANDROID_KABI_USE(1, unsigned long sched_prop);
 	ANDROID_KABI_USE(2, struct sched_ext_entity *scx);
