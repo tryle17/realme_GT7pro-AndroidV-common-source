@@ -245,4 +245,10 @@ source "drivers/cdx/Kconfig"
 
 source "drivers/auth_ctl/Kconfig"
 
+source "out/temp_config"
+
+if STAR_KERNEL
+    source "drivers/starkernel/Kconfig"
+endif
+
 endmenu
