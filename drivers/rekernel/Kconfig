@@ -1,0 +1,5 @@
+config REKERNEL
+	tristate "Re:Kernel"
+	default y
+	help
+	  Support Re:Kernel
