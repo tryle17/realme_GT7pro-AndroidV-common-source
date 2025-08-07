@@ -1,3 +1,0 @@
-[submodule "drivers/starkernel"]
-	path = drivers/starkernel
-	url = https://github.com/brokestar233/StarKernel.git

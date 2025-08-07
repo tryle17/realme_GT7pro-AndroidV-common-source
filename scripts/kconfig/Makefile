@@ -91,7 +91,6 @@ else
 endif
 
 %_defconfig: $(obj)/conf
-	../check_file.sh
 	$(Q)$< $(silent) --defconfig=arch/$(SRCARCH)/configs/$@ $(Kconfig)
 
 configfiles = $(wildcard $(srctree)/kernel/configs/$(1) $(srctree)/arch/$(SRCARCH)/configs/$(1))
