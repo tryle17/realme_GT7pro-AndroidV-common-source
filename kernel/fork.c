@@ -102,6 +102,7 @@
 #include <linux/iommu.h>
 #include <linux/tick.h>
 #include <linux/cpufreq_times.h>
+#include <linux/dma-buf.h>
 
 #ifdef CONFIG_USER_NS
 #include <linux/user_namespace.h>
@@ -1015,6 +1016,7 @@ void __put_task_struct(struct task_struct *tsk)
 	WARN_ON(tsk == current);
 
 	sched_ext_free(tsk);
+	put_dmabuf_info(tsk);
 	io_uring_free(tsk);
 	cgroup_free(tsk);
 	task_numa_free(tsk, true);
@@ -2534,10 +2536,16 @@ __latent_entropy struct task_struct *copy_process(
 	p->bpf_ctx = NULL;
 #endif
 
+	retval = copy_dmabuf_info(clone_flags, p);
+	if (retval) {
+		pr_err("failed to copy dmabuf accounting info, err %d\n", retval);
+		goto bad_fork_cleanup_policy;
+	}
+
 	/* Perform scheduler related setup. Assign this task to a CPU. */
 	retval = sched_fork(clone_flags, p);
 	if (retval)
-		goto bad_fork_cleanup_policy;
+		goto bad_fork_cleanup_dmabuf;
 
 	retval = perf_event_init_task(p, clone_flags);
 	if (retval)
@@ -2857,6 +2865,8 @@ bad_fork_cleanup_audit:
 	audit_free(p);
 bad_fork_cleanup_perf:
 	perf_event_free_task(p);
+bad_fork_cleanup_dmabuf:
+	put_dmabuf_info(p);
 bad_fork_sched_cancel_fork:
 	sched_cancel_fork(p);
 bad_fork_cleanup_policy:
