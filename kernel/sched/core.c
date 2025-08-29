@@ -10826,29 +10826,31 @@ static void sched_change_group(struct task_struct *tsk)
  */
 void sched_move_task(struct task_struct *tsk)
 {
-
+	int queued, running, queue_flags =
+		DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK;
 	struct rq_flags rf;
 	struct rq *rq;
-
 	trace_android_vh_sched_move_task(tsk);
 	rq = task_rq_lock(tsk, &rf);
 	update_rq_clock(rq);
-
-	SCHED_CHANGE_BLOCK(rq, tsk,
-			   DEQUEUE_SAVE | DEQUEUE_MOVE | DEQUEUE_NOCLOCK) {
-		sched_change_group(tsk);
-	}
-
-
-	/*
-	 * After changing group, the running task may have joined a throttled
-	 * one but it's still the running task. Trigger a resched to make sure
-	 * that task can still run.
-	 */
-	if (task_current(rq, tsk))
+	running = task_current(rq, tsk);
+	queued = task_on_rq_queued(tsk);
+	if (queued)
+		dequeue_task(rq, tsk, queue_flags);
+	if (running)
+		put_prev_task(rq, tsk);
+	sched_change_group(tsk);
+	if (queued)
+		enqueue_task(rq, tsk, queue_flags);
+	if (running) {
+		set_next_task(rq, tsk);
+		/*
+		 * After changing group, the running task may have joined a
+		 * throttled one but it's still the running task. Trigger a
+		 * resched to make sure that task can still run.
+		 */
 		resched_curr(rq);
-	
-
+	}
 	task_rq_unlock(rq, tsk, &rf);
 }
 
